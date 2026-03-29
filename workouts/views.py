@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from .models import Workout
 
 
 def register(request):
@@ -23,4 +24,8 @@ def register(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'workouts/dashboard.html')
+    recent_workouts = Workout.objects.filter(user=request.user).order_by('-date')[:5]
+    context = {
+        'recent_workouts': recent_workouts,
+    }
+    return render(request, 'workouts/dashboard.html', context)

@@ -41,3 +41,27 @@ class DashboardTests(TestCase):
         workouts = response.context['recent_workouts']
         self.assertEqual(workouts[0].date, date(2026, 3, 25))
         self.assertEqual(workouts[4].date, date(2026, 3, 21))
+
+    def test_log_workout_accessible_if_logged_in(self):
+        self.client.login(username='testuser', password='password123')
+        response = self.client.get(reverse('log_workout'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'workouts/log_workout.html')
+
+    def test_log_workout_post_valid_data(self):
+        self.client.login(username='testuser', password='password123')
+        data = {
+            'exercise': self.exercise.id,
+            'sets': 3,
+            'reps': 12,
+            'weight': 60.0,
+            'date': '2026-03-29',
+            'notes': 'Good session'
+        }
+        response = self.client.post(reverse('log_workout'), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('dashboard'))
+        self.assertEqual(Workout.objects.count(), 1)
+        workout = Workout.objects.first()
+        self.assertEqual(workout.user, self.user)
+        self.assertEqual(workout.reps, 12)

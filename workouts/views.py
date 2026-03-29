@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Workout
+from .forms import WorkoutForm
 
 
 def register(request):
@@ -29,3 +30,18 @@ def dashboard(request):
         'recent_workouts': recent_workouts,
     }
     return render(request, 'workouts/dashboard.html', context)
+
+
+@login_required
+def log_workout(request):
+    if request.method == 'POST':
+        form = WorkoutForm(request.POST)
+        if form.is_valid():
+            workout = form.save(commit=False)
+            workout.user = request.user
+            workout.save()
+            return redirect('dashboard')
+    else:
+        form = WorkoutForm()
+        
+    return render(request, 'workouts/log_workout.html', {'form': form})

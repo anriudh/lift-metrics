@@ -12,9 +12,10 @@
     <nav class="navbar navbar-expand-lg border-bottom border-slate-600 bg-slate-800">
         <div class="container">
             <a class="navbar-brand text-cyan fw-bold" href="{% url 'dashboard' %}">LiftMetrics</a>
-            <div class="navbar-nav ms-auto">
+            <div class="navbar-nav ms-auto align-items-center">
                 {% if user.is_authenticated %}
-                    <span class="nav-link text-slate-300 me-3">Welcome, {{ user.username }}</span>
+                    <a class="nav-link text-slate-300 me-3" href="{% url 'log_workout' %}">Log Workout</a>
+                    <span class="nav-link text-slate-300 me-3 border-start border-slate-600 ps-3">Welcome, {{ user.username }}</span>
                     <form action="{% url 'logout' %}" method="post" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-outline-cyan">Logout</button>

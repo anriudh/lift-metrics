@@ -33,6 +33,12 @@ def dashboard(request):
 
 
 @login_required
+def workout_history(request):
+    workouts = Workout.objects.filter(user=request.user).order_by('-date')
+    return render(request, 'workouts/history.html', {'workouts': workouts})
+
+
+@login_required
 def log_workout(request):
     if request.method == 'POST':
         form = WorkoutForm(request.POST)
